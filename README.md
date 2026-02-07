@@ -4,6 +4,12 @@ Lineage 1 (3.80c Taiwan) game server written in Rust.
 
 A complete rewrite of the L1J-TW Java server, designed for extreme performance — capable of handling 10,000+ NPCs on screen without lag.
 
+<p align="right">
+  <b>English</b> |
+  <a href="README.zh-TW.md">繁體中文</a> |
+  <a href="README.zh-CN.md">简体中文</a>
+</p>
+
 ## Features
 
 ### Networking
@@ -127,10 +133,10 @@ CREATE DATABASE l1jdb CHARACTER SET utf8;
 
 2. Import the L1J-TW database tables (from the original Java server's `db/` folder).
 
-3. Edit `config/server.toml`:
+3. Edit `config/server.example.toml change server.toml`:
 ```toml
 [database]
-url = "mysql://root:YOUR_PASSWORD@localhost:3306/l1jdb"
+url = "mysql://root:youpassword@localhost:3306/l1jdb"
 ```
 
 4. Build and run:
