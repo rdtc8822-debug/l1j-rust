@@ -10,7 +10,7 @@
 ///   5. Broadcast: send animation/effect packets to nearby players
 ///   6. Cooldown: set skill delay
 
-use rand::Rng;
+use rand::RngExt;
 
 use crate::ecs::components::skill::{SkillEffects, SkillCooldowns, SkillTemplate};
 
@@ -243,14 +243,14 @@ fn calc_mp_cost(base_cost: i32, int_stat: i32) -> i32 {
 ///   bonus = SP bonus + INT bonus
 ///   total = base + bonus
 fn calc_magic_damage(skill: &SkillTemplate, caster: &CasterInfo) -> i32 {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     let mut damage = skill.damage_value;
 
     // Dice damage
     if skill.damage_dice > 0 && skill.damage_dice_count > 0 {
         for _ in 0..skill.damage_dice_count {
-            damage += rng.gen_range(1..=skill.damage_dice);
+            damage += rng.random_range(1..=skill.damage_dice);
         }
     }
 
@@ -268,13 +268,13 @@ fn calc_magic_damage(skill: &SkillTemplate, caster: &CasterInfo) -> i32 {
 ///
 /// Formula: base_value + random dice + INT bonus
 fn calc_healing(skill: &SkillTemplate, caster: &CasterInfo) -> i32 {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     let mut heal = skill.damage_value.abs();
 
     if skill.damage_dice > 0 {
         for _ in 0..skill.damage_dice_count.max(1) {
-            heal += rng.gen_range(1..=skill.damage_dice);
+            heal += rng.random_range(1..=skill.damage_dice);
         }
     }
 
@@ -291,14 +291,14 @@ fn calc_healing(skill: &SkillTemplate, caster: &CasterInfo) -> i32 {
 ///   hit_rate = 90 - (MR - caster_level) + (caster_level - target_level) * 2
 ///   Clamped to 10%-95%.
 fn check_magic_resist(caster_level: i32, target_level: i32, target_mr: i32) -> bool {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     let base = 90;
     let mr_penalty = target_mr.max(0);
     let level_bonus = (caster_level - target_level) * 2;
 
     let hit_rate = (base - mr_penalty + level_bonus).clamp(10, 95);
-    let roll = rng.gen_range(1..=100);
+    let roll = rng.random_range(1..=100);
 
     roll <= hit_rate
 }
@@ -315,16 +315,16 @@ pub fn calc_buff_damage_modifier(effects: &SkillEffects) -> f32 {
 
     // 燃燒鬥志 (skill 102): 34% chance × 1.5 damage
     if effects.has_effect(102) {
-        let mut rng = rand::thread_rng();
-        if rng.gen_range(0..100) < 34 {
+        let mut rng = rand::rng();
+        if rng.random_range(0..100) < 34 {
             modifier *= 1.5;
         }
     }
 
     // 雙重破壞 (skill 105): 32% chance × 2.0 damage (requires dual sword/claw)
     if effects.has_effect(105) {
-        let mut rng = rand::thread_rng();
-        if rng.gen_range(0..100) < 32 {
+        let mut rng = rand::rng();
+        if rng.random_range(0..100) < 32 {
             modifier *= 2.0;
         }
     }
@@ -334,8 +334,8 @@ pub fn calc_buff_damage_modifier(effects: &SkillEffects) -> f32 {
 
     // 勇猛意志 (skill 117): 30% chance × 1.5 damage
     if effects.has_effect(117) {
-        let mut rng = rand::thread_rng();
-        if rng.gen_range(0..100) < 30 {
+        let mut rng = rand::rng();
+        if rng.random_range(0..100) < 30 {
             modifier *= 1.5;
         }
     }

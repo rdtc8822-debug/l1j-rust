@@ -11,7 +11,7 @@
 
 use std::collections::HashMap;
 
-use rand::Rng;
+use rand::RngExt;
 
 use crate::ecs::components::movement::Movement;
 use crate::ecs::components::npc::{AiState, NpcTemplate};
@@ -137,7 +137,7 @@ impl GameWorld {
     pub fn tick(&mut self, ai_sleep_range: i32) -> Vec<NpcMovement> {
         self.tick_count += 1;
         let mut movements = Vec::new();
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         // Collect NPC IDs to iterate (avoids borrow issues)
         let npc_ids: Vec<ObjectId> = self.npcs.keys().copied().collect();
@@ -190,11 +190,11 @@ impl GameWorld {
             if npc.ai.target_id == 0 && is_monster {
                 // Random walk behavior
                 if npc.ai.random_walk_distance == 0 {
-                    npc.ai.random_walk_distance = rng.gen_range(1..=5);
-                    npc.ai.random_walk_direction = rng.gen_range(0..8);
+                    npc.ai.random_walk_distance = rng.random_range(1..=5);
+                    npc.ai.random_walk_direction = rng.random_range(0..8);
 
                     // Occasionally walk toward home point
-                    if npc.ai.home_x != 0 && npc.ai.home_y != 0 && rng.gen_range(0..3) == 0 {
+                    if npc.ai.home_x != 0 && npc.ai.home_y != 0 && rng.random_range(0..3) == 0 {
                         let dx = npc.ai.home_x - npc.pos.x;
                         let dy = npc.ai.home_y - npc.pos.y;
                         if dx != 0 || dy != 0 {

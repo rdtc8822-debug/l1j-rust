@@ -4,6 +4,7 @@
 /// 功能：熔煉裝備 → 火神結晶體、製作武器/防具
 ///
 /// 資料來源：天堂官方活動頁面、17173 天堂攻略
+use rand::RngExt;
 
 /// 火神結晶體 item ID。
 pub const VULCAN_CRYSTAL_ID: i32 = 41246;
@@ -189,8 +190,7 @@ pub fn try_craft(
         recipe.base_success_rate
     };
 
-    use rand::Rng;
-    let roll = rand::thread_rng().gen_range(1..=100);
+    let roll = rand::rng().random_range(1..=100);
 
     if roll <= success_rate {
         CraftResult::Success(recipe.result_item_id)

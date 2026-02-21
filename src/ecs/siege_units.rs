@@ -18,6 +18,7 @@
 /// - 其他城堡：親衛隊(75/8403)、親衛隊騎士(68/11049)、親衛隊牧師(70/11513)
 
 use std::collections::HashMap;
+use rand::RngExt;
 
 // ===========================================================================
 // 投石器 (Catapult) - 官方機制
@@ -309,8 +310,7 @@ impl GuardState {
     pub fn try_attack(&mut self) -> i32 {
         if !self.is_alive || self.target_id == 0 || self.atk_cooldown > 0 { return 0; }
         self.atk_cooldown = 10; // 2 秒攻擊間隔
-        use rand::Rng;
-        rand::thread_rng().gen_range(self.damage_min..=self.damage_max)
+        rand::rng().random_range(self.damage_min..=self.damage_max)
     }
 
     pub fn receive_damage(&mut self, damage: i32) -> bool {

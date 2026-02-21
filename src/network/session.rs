@@ -1,5 +1,5 @@
 use anyhow::{bail, Result};
-use rand::Rng;
+use rand::RngExt;
 use sqlx::MySqlPool;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
@@ -91,7 +91,7 @@ impl Session {
 
     /// Send the initial handshake packet (unencrypted).
     async fn send_handshake(&mut self) -> Result<u32> {
-        let key: u32 = rand::thread_rng().gen_range(1..=0x7FFFFFFFu32);
+        let key: u32 = rand::rng().random_range(1..=0x7FFFFFFFu32);
 
         let mut payload = Vec::with_capacity(1 + 4 + FIRST_PACKET.len());
         payload.push(opcodes::server::S_OPCODE_INITPACKET);

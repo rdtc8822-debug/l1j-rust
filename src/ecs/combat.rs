@@ -3,7 +3,7 @@
 /// Ported from Java L1Attack.java. Handles hit/miss determination
 /// and damage calculation for melee and ranged attacks.
 
-use rand::Rng;
+use rand::{Rng, RngExt};
 
 /// Attack types for calculation branching.
 #[derive(Debug, Clone, Copy)]
@@ -57,7 +57,7 @@ pub fn calculate_attack(
     defender: &DefenderStats,
     attack_type: AttackType,
 ) -> AttackResult {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     // Hit calculation
     let hit = calc_hit(&mut rng, attacker, defender, attack_type);
@@ -94,7 +94,7 @@ fn calc_hit(
         (attacker.str_stat - 10) / 2
     };
 
-    let attacker_roll = rng.gen_range(1..=20)
+    let attacker_roll = rng.random_range(1..=20)
         + attacker.hit_modifier
         + stat_bonus
         + attacker.level / 2;
@@ -114,9 +114,9 @@ fn calc_damage(
 ) -> (i32, bool) {
     // Base weapon damage
     let weapon_damage = if attacker.weapon_max_damage > 0 {
-        rng.gen_range(1..=attacker.weapon_max_damage)
+        rng.random_range(1..=attacker.weapon_max_damage)
     } else {
-        rng.gen_range(1..=4) // unarmed
+        rng.random_range(1..=4) // unarmed
     };
 
     // STR/DEX bonus
@@ -130,7 +130,7 @@ fn calc_damage(
     let enchant_bonus = attacker.weapon_enchant;
 
     // Critical hit (5% chance, double damage)
-    let is_critical = rng.gen_range(1..=20) == 20;
+    let is_critical = rng.random_range(1..=20) == 20;
     let crit_multiplier = if is_critical { 2 } else { 1 };
 
     // Total damage
@@ -154,10 +154,10 @@ pub fn calculate_npc_attack(
     npc_str: i32,
     defender: &DefenderStats,
 ) -> AttackResult {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     // Simple hit roll
-    let hit_roll = rng.gen_range(1..=20) + npc_level / 2;
+    let hit_roll = rng.random_range(1..=20) + npc_level / 2;
     let dodge = 10 - defender.ac;
 
     if hit_roll < dodge {
@@ -170,7 +170,7 @@ pub fn calculate_npc_attack(
 
     // NPC damage formula
     let base_damage = if npc_level > 0 {
-        rng.gen_range(0..npc_level)
+        rng.random_range(0..npc_level)
     } else {
         0
     };
